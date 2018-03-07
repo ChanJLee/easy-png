@@ -19,6 +19,12 @@ function handle_help() {
 function do_compress() {
     image=$1
     tiny_response=`curl --user api:${TINY_KEY} --data-binary @${image} -i https://api.tinify.com/shrink`
+    tiny_response_code=$?
+    if [[ ${tiny_response_code} != 0 ]]; then
+        echo "network error"
+        return -1
+    fi
+
     compressed_image_link=`echo ${tiny_response} | awk -F '"' '{print $(NF-1)}'`
     curl -o ${image} ${compressed_image_link}
 }
@@ -45,6 +51,7 @@ function compress_folder() {
     for image in ${images}
     do
         if [[ ${image} == *.png ]]; then
+            echo "compress ${image}"
             do_compress ${image}
         fi
     done
