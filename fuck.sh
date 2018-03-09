@@ -55,6 +55,15 @@ function compress_folder() {
             do_compress ${image}
         fi
     done
+
+    images=`git status --porcelain | grep "^R" | cut -c 4-`
+    for image in ${images}
+    do
+        if [[ ${image} == *.png ]]; then
+            echo "compress ${image}"
+            do_compress ${image}
+        fi
+    done
     cd -
 }
 
